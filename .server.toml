@@ -1,0 +1,21 @@
+[app]
+name = "ayoles-portal"
+version = "0.0.1"
+host = "localhost"
+port = 80
+read_timeout = 5
+write_timeout = 10
+idle_timeout = 15
+files = "files"
+css = "css"
+fonts = "fonts"
+js = "js"
+
+[server]
+url = "https://warm-wave-76942.herokuapp.com/graphql"
+
+[template]
+path = "template/*.html"
+
+[api]
+google_drive_api = "19ba0cc860141d07f07d64069509fe7dcf3f07b1"
