@@ -11,6 +11,7 @@ type PostData struct {
 	URL string
 	Key string
 }
+
 type Response struct {
 	Status string
 	Header http.Header

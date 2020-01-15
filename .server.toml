@@ -18,4 +18,4 @@ url = "https://warm-wave-76942.herokuapp.com/graphql"
 path = "template/*.html"
 
 [api]
-google_drive_api = "19ba0cc860141d07f07d64069509fe7dcf3f07b1"
+credential = "credential/ayoles-19ba0cc86014.json"
