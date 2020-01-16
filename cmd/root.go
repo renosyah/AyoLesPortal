@@ -38,10 +38,10 @@ var rootCmd = &cobra.Command{
 		r.HandleFunc("/", router.Index)
 
 		// static file serve server
-		r.PathPrefix("/data/").Handler(http.StripPrefix("/data/", http.FileServer(http.Dir(viper.GetString("app.files")))))
-		r.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir(viper.GetString("app.css")))))
-		r.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir(viper.GetString("app.js")))))
-		r.PathPrefix("/fonts/").Handler(http.StripPrefix("/fonts/", http.FileServer(http.Dir(viper.GetString("app.fonts")))))
+		r.PathPrefix("/data/").Handler(http.StripPrefix("/data/", http.FileServer(http.Dir(viper.GetString("utils.files")))))
+		r.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir(viper.GetString("utils.css")))))
+		r.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir(viper.GetString("utils.js")))))
+		r.PathPrefix("/fonts/").Handler(http.StripPrefix("/fonts/", http.FileServer(http.Dir(viper.GetString("utils.fonts")))))
 
 		port := viper.GetInt("app.port")
 		p := os.Getenv("PORT")

@@ -1,18 +1,20 @@
-{{template "header.html"}}
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Lets Teach</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
 <body>
-  <nav class="blue darken-4" role="navigation">
-    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Lets Teach</a>
-      <ul class="right hide-on-med-and-down">
-        <li><a href="#">Login With Email</a></li>
-      </ul>
+  
+  {{template "header.html" .}}
 
-      <ul id="nav-mobile" class="sidenav">
-        <li><a href="#">Login With Email</a></li>
-      </ul>
-      <a href="#" data-target="nav-mobile" class="sidenav-trigger">Login</a>
-    </div>
-  </nav>
   <div class="section no-pad-bot" id="index-banner">
     <div class="container">
       <br><br>
@@ -21,7 +23,7 @@
         <h5 class="header col s12 light">A modern and simple course platform for you to share your knowledge with all student across nations</h5>
       </div>
       <div class="row center">
-        <a href="#" id="download-button" class="btn-large waves-effect waves-light green">Join Us Now!</a>
+        <a href="/register" id="download-button" class="btn-large waves-effect waves-light green">Join Us Now!</a>
       </div>
       <br><br>
 

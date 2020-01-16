@@ -6,10 +6,6 @@ port = 80
 read_timeout = 5
 write_timeout = 10
 idle_timeout = 15
-files = "files"
-css = "css"
-fonts = "fonts"
-js = "js"
 
 [server]
 url = "https://warm-wave-76942.herokuapp.com/graphql"
@@ -19,3 +15,9 @@ path = "template/*.html"
 
 [api]
 credential = "credential/ayoles-19ba0cc86014.json"
+
+[utils]
+files = "files"
+css = "files/css"
+fonts = "files/fonts"
+js = "files/js"
