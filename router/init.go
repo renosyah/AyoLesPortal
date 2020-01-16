@@ -28,6 +28,7 @@ var (
 	classRoomQualificationModule *api.ClassRoomQualificationModule
 	courseExamSolutionModule     *api.CourseExamSolutionModule
 	temp                         *template.Template
+	cookieConfig                 *util.CookieConfig
 )
 
 func Init(r *util.PostData, temppath string) {
@@ -51,4 +52,5 @@ func Init(r *util.PostData, temppath string) {
 	courseQualificationModule = api.NewCourseQualificationModule(req)
 	classRoomQualificationModule = api.NewClassRoomQualificationModule(req)
 	courseExamSolutionModule = api.NewCourseExamSolutionModule(req)
+	cookieConfig = util.NewCookieConfig()
 }

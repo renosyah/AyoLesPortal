@@ -42,6 +42,8 @@ var rootCmd = &cobra.Command{
 		r.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir(viper.GetString("utils.css")))))
 		r.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir(viper.GetString("utils.js")))))
 		r.PathPrefix("/fonts/").Handler(http.StripPrefix("/fonts/", http.FileServer(http.Dir(viper.GetString("utils.fonts")))))
+		
+		r.NotFoundHandler = r.NewRoute().HandlerFunc(router.NotFound).GetHandler()
 
 		port := viper.GetInt("app.port")
 		p := os.Getenv("PORT")
@@ -101,7 +103,6 @@ func init() {
 func initRequestPost() {
 	r := &util.PostData{
 		URL: viper.GetString("server.url"),
-		Key: viper.GetString("api.google_drive_api"),
 	}
 	req = r
 }

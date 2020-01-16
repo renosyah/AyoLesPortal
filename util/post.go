@@ -9,7 +9,6 @@ import (
 
 type PostData struct {
 	URL string
-	Key string
 }
 
 type Response struct {
