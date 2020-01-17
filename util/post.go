@@ -3,6 +3,8 @@ package util
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -30,6 +32,20 @@ type SchemaResponse struct {
 			Column int `json:"column"`
 		} `json:"location"`
 	} `json:"errors"`
+}
+
+func (s *SchemaResponse) Error() error {
+
+	if len(s.Errors) == 0 {
+		return nil
+	}
+
+	err := ""
+	for _, v := range s.Errors {
+		err += fmt.Sprint(" ", v)
+	}
+
+	return errors.New(err)
 }
 
 func (s *SchemaResponse) ConvertData(t interface{}) error {

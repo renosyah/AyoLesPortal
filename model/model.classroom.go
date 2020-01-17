@@ -71,3 +71,7 @@ func (c *ClassRoom) Delete(ctx context.Context, r *util.PostData) (uuid.UUID, er
 	var id uuid.UUID
 	return id, nil
 }
+
+// this model
+// doesnot have any api
+// to call from core

@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/renosyah/AyoLesPortal/util"
 	uuid "github.com/satori/go.uuid"
@@ -66,13 +67,111 @@ func (c *ClassRoomExamResult) Response() ClassRoomExamResultResponse {
 }
 
 func (c *ClassRoomExamResult) One(ctx context.Context, r *util.PostData, LimitAnswer int) (*ClassRoomExamResult, error) {
-	one := &ClassRoomExamResult{}
-	return one, nil
+	classroomExamResultDetail := struct {
+		ClassroomExamResultDetail *ClassRoomExamResult `json:"classroom_exam_result_detail"`
+	}{
+		ClassroomExamResultDetail: &ClassRoomExamResult{},
+	}
+
+	query := `query {
+		classroom_exam_result_detail(
+			course_exam_id: "%s",
+			course_id: "%s",
+			limit_answer: %d
+		)
+		{
+			course_exam_id,
+			course_id,
+			classroom_id,
+			student_answer_id,
+			right_answer_id,
+			type_exam,
+			exam_index,
+			text,
+			image_url
+			answers {
+				id,
+				course_exam_id,
+				type_answer,
+				label,
+				text,
+				image_url
+			}
+		}
+	}`
+
+	resp, err := r.Send(fmt.Sprintf(query, c.CourseExamID, c.CourseID, LimitAnswer))
+	if err != nil {
+		return classroomExamResultDetail.ClassroomExamResultDetail, err
+	}
+
+	err = resp.Body.Error()
+	if err != nil {
+		return classroomExamResultDetail.ClassroomExamResultDetail, err
+	}
+
+	err = resp.Body.ConvertData(&classroomExamResultDetail)
+	if err != nil {
+		return classroomExamResultDetail.ClassroomExamResultDetail, err
+	}
+	return classroomExamResultDetail.ClassroomExamResultDetail, nil
 }
 
 func (c *ClassRoomExamResult) All(ctx context.Context, r *util.PostData, param AllClassRoomExamResult) ([]*ClassRoomExamResult, error) {
-	all := []*ClassRoomExamResult{}
-	return all, nil
+	classroomExamResultList := struct {
+		ClassroomExamResultList []*ClassRoomExamResult `json:"classroom_exam_result_list"`
+	}{
+		ClassroomExamResultList: []*ClassRoomExamResult{},
+	}
+
+	query := `query {
+		classroom_exam_result_list(
+			classroom_id : "%s",
+			search_by:"%s",
+			search_value:"%s",
+			order_by:"%s",
+			order_dir:"%s",
+			offset:%d,
+			limit:%d,
+			limit_answer:%d
+		)
+		{
+			course_exam_id,
+			course_id,
+			classroom_id,
+			student_answer_id,
+			right_answer_id,
+			type_exam,
+			exam_index,
+			text,
+			image_url
+			answers {
+				id,
+				course_exam_id,
+				type_answer,
+				label,
+				text,
+				image_url
+			}
+		}
+	}`
+
+	resp, err := r.Send(fmt.Sprintf(query,
+		param.ClassRoomID, param.SearchBy, param.SearchValue, param.OrderBy, param.OrderDir, param.Offset, param.Limit, param.LimitAnswer))
+	if err != nil {
+		return classroomExamResultList.ClassroomExamResultList, err
+	}
+
+	err = resp.Body.Error()
+	if err != nil {
+		return classroomExamResultList.ClassroomExamResultList, err
+	}
+
+	err = resp.Body.ConvertData(&classroomExamResultList)
+	if err != nil {
+		return classroomExamResultList.ClassroomExamResultList, err
+	}
+	return classroomExamResultList.ClassroomExamResultList, nil
 }
 
 // ITS DOESNOT HAVE TABLE

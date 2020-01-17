@@ -57,23 +57,6 @@ func (m TeacherModule) Add(ctx context.Context, param AddTeacherParam) (model.Te
 		Password: param.Password,
 	}
 
-	check, err := teacher.OneByEmail(ctx, m.r)
-	if err != nil && errors.Cause(err) != sql.ErrNoRows {
-		status := http.StatusInternalServerError
-		message := "error on check existing teacher"
-
-		return model.TeacherResponse{}, NewErrorWrap(err, m.Name, "add/teacher",
-			message, status)
-	}
-
-	if check.Email != "" && check.Email == teacher.Email {
-		status := http.StatusOK
-		message := "teacher with this email is exist"
-
-		return model.TeacherResponse{}, NewErrorWrap(err, m.Name, "add/teacher",
-			message, status)
-	}
-
 	id, err := teacher.Add(ctx, m.r)
 	if err != nil {
 		status := http.StatusInternalServerError
@@ -145,7 +128,7 @@ func (m TeacherModule) One(ctx context.Context, param OneTeacherParam) (model.Te
 func (m TeacherModule) Login(ctx context.Context, param TeacherLoginParam) (model.TeacherResponse, *Error) {
 	var resp model.TeacherResponse
 
-	teacher, err := (&model.Teacher{Email: param.Email}).OneByEmail(ctx, m.r)
+	teacher, err := (&model.Teacher{Email: param.Email, Password: param.Password}).Login(ctx, m.r)
 	if err != nil {
 		status := http.StatusInternalServerError
 		message := "error on login teacher"
@@ -154,14 +137,6 @@ func (m TeacherModule) Login(ctx context.Context, param TeacherLoginParam) (mode
 			status = http.StatusUnauthorized
 			message = "no teacher found"
 		}
-
-		return resp, NewErrorWrap(err, m.Name, "login/teacher",
-			message, status)
-	}
-
-	if teacher.Password != param.Password {
-		status := http.StatusOK
-		message := "password is invalid"
 
 		return resp, NewErrorWrap(err, m.Name, "login/teacher",
 			message, status)

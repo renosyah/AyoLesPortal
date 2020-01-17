@@ -86,23 +86,6 @@ func (m StudentModule) Add(ctx context.Context, param AddStudentParam) (model.St
 		Password: param.Password,
 	}
 
-	check, err := student.OneByEmail(ctx, m.r)
-	if err != nil && errors.Cause(err) != sql.ErrNoRows {
-		status := http.StatusInternalServerError
-		message := "error on check existing student"
-
-		return model.StudentResponse{}, NewErrorWrap(err, m.Name, "add/student",
-			message, status)
-	}
-
-	if check.Email != "" && check.Email == student.Email {
-		status := http.StatusOK
-		message := "student with this email is exist"
-
-		return model.StudentResponse{}, NewErrorWrap(err, m.Name, "add/student",
-			message, status)
-	}
-
 	id, err := student.Add(ctx, m.r)
 	if err != nil {
 		status := http.StatusInternalServerError
@@ -174,7 +157,7 @@ func (m StudentModule) One(ctx context.Context, param OneStudentParam) (model.St
 func (m StudentModule) Login(ctx context.Context, param StudentLoginParam) (model.StudentResponse, *Error) {
 	var resp model.StudentResponse
 
-	student, err := (&model.Student{Email: param.Email}).OneByEmail(ctx, m.r)
+	student, err := (&model.Student{Email: param.Email, Password: param.Password}).Login(ctx, m.r)
 	if err != nil {
 		status := http.StatusInternalServerError
 		message := "error on login student"
@@ -183,14 +166,6 @@ func (m StudentModule) Login(ctx context.Context, param StudentLoginParam) (mode
 			status = http.StatusUnauthorized
 			message = "no student found"
 		}
-
-		return resp, NewErrorWrap(err, m.Name, "login/student",
-			message, status)
-	}
-
-	if student.Password != param.Password {
-		status := http.StatusOK
-		message := "password is invalid"
 
 		return resp, NewErrorWrap(err, m.Name, "login/student",
 			message, status)

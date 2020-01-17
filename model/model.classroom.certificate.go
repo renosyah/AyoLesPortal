@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/renosyah/AyoLesPortal/util"
@@ -42,17 +43,118 @@ func (c *ClassRoomCertificate) Response() ClassRoomCertificateResponse {
 }
 
 func (c *ClassRoomCertificate) Add(ctx context.Context, r *util.PostData) (uuid.UUID, error) {
+	classroomCertificateRegister := struct {
+		ClassroomCertificateRegister ClassRoomCertificate `json:"classroom_certificate_register"`
+	}{
+		ClassroomCertificateRegister: ClassRoomCertificate{},
+	}
+
+	query := `mutation {
+		classroom_certificate_register(
+			classroom_id : "%s"
+		)
+		{
+			id,
+			classroom_id,
+			hash_id
+		 }
+	}`
+
+	resp, err := r.Send(fmt.Sprintf(query, c.ClassroomID))
+	if err != nil {
+		return c.ID, err
+	}
+
+	err = resp.Body.Error()
+	if err != nil {
+		return c.ID, err
+	}
+
+	err = resp.Body.ConvertData(&classroomCertificateRegister)
+	if err != nil {
+		return c.ID, err
+	}
+
+	c.ID = classroomCertificateRegister.ClassroomCertificateRegister.ID
+
 	return c.ID, nil
 }
 
 func (c *ClassRoomCertificate) One(ctx context.Context, r *util.PostData) (*ClassRoomCertificate, error) {
-	one := &ClassRoomCertificate{}
-	return one, nil
+	classroomCertificateDetail := struct {
+		ClassroomCertificateDetail *ClassRoomCertificate `json:"classroom_certificate_detail"`
+	}{
+		ClassroomCertificateDetail: &ClassRoomCertificate{},
+	}
+
+	query := `query {
+		classroom_certificate_detail(
+			classroom_id: "%s"
+		)
+		{
+			id,
+			classroom_id,
+			hash_id
+		 }
+	}`
+
+	resp, err := r.Send(fmt.Sprintf(query, c.ClassroomID))
+	if err != nil {
+		return classroomCertificateDetail.ClassroomCertificateDetail, err
+	}
+
+	err = resp.Body.Error()
+	if err != nil {
+		return classroomCertificateDetail.ClassroomCertificateDetail, err
+	}
+
+	err = resp.Body.ConvertData(&classroomCertificateDetail)
+	if err != nil {
+		return classroomCertificateDetail.ClassroomCertificateDetail, err
+	}
+
+	return classroomCertificateDetail.ClassroomCertificateDetail, nil
 }
 
 func (c *ClassRoomCertificate) All(ctx context.Context, r *util.PostData, param AllClassRoomCertificate) ([]*ClassRoomCertificate, error) {
-	all := []*ClassRoomCertificate{}
-	return all, nil
+	classroomCertificateList := struct {
+		ClassroomCertificateList []*ClassRoomCertificate `json:"classroom_certificate_list"`
+	}{
+		ClassroomCertificateList: []*ClassRoomCertificate{},
+	}
+
+	query := `query {
+		classroom_certificate_list(
+			student_id:"%s",
+			order_by:"%s",
+			order_dir:"%s",
+			offset:%d,
+			limit:%d
+		)
+		{
+			id,
+			classroom_id,
+			hash_id
+		 }
+	}`
+
+	resp, err := r.Send(fmt.Sprintf(query,
+		param.StudentID, param.OrderBy, param.OrderDir, param.Offset, param.Limit))
+	if err != nil {
+		return classroomCertificateList.ClassroomCertificateList, err
+	}
+
+	err = resp.Body.Error()
+	if err != nil {
+		return classroomCertificateList.ClassroomCertificateList, err
+	}
+
+	err = resp.Body.ConvertData(&classroomCertificateList)
+	if err != nil {
+		return classroomCertificateList.ClassroomCertificateList, err
+	}
+
+	return classroomCertificateList.ClassroomCertificateList, nil
 }
 
 func (c *ClassRoomCertificate) Update(ctx context.Context, r *util.PostData) (uuid.UUID, error) {

@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/renosyah/AyoLesPortal/util"
 	uuid "github.com/satori/go.uuid"
@@ -57,17 +58,158 @@ func (c *CourseExam) Response() CourseExamResponse {
 }
 
 func (c *CourseExam) Add(ctx context.Context, r *util.PostData) (uuid.UUID, error) {
+	courseExamRegister := struct {
+		CourseExamRegister CourseExam `json:"course_exam_register"`
+	}{
+		CourseExamRegister: CourseExam{},
+	}
+
+	query := `mutation {
+		course_exam_register(
+			course_id : "%s",
+			type_exam : "%s",
+			exam_index : "%s",
+			text : "%s",
+			image_url : "%s"
+		)
+		{
+			id,
+			course_id,
+			type_exam,
+			exam_index,
+			text,
+			image_url,
+			answers {
+				id,
+				course_exam_id,
+				type_answer,
+				label,
+				text,
+				image_url
+			}
+		}
+	}`
+
+	resp, err := r.Send(fmt.Sprintf(query, c.CourseID, c.TypeExam, c.ExamIndex, c.Text, c.ImageURL))
+	if err != nil {
+		return c.ID, err
+	}
+
+	err = resp.Body.Error()
+	if err != nil {
+		return c.ID, err
+	}
+
+	err = resp.Body.ConvertData(&courseExamRegister)
+	if err != nil {
+		return c.ID, err
+	}
+
+	c.ID = courseExamRegister.CourseExamRegister.ID
+
 	return c.ID, nil
 }
 
 func (c *CourseExam) One(ctx context.Context, r *util.PostData, LimitAnswer int) (*CourseExam, error) {
-	one := &CourseExam{}
-	return one, nil
+	courseExamDetail := struct {
+		CourseExamDetail *CourseExam `json:"course_exam_detail"`
+	}{
+		CourseExamDetail: &CourseExam{},
+	}
+
+	query := `query {
+		course_exam_detail(
+			id: "%s"
+		)
+		{
+			id,
+			course_id,
+			type_exam,
+			exam_index,
+			text,
+			image_url,
+			answers {
+				id,
+				course_exam_id,
+				type_answer,
+				label,
+				text,
+				image_url
+			}
+		}
+	}`
+
+	resp, err := r.Send(fmt.Sprintf(query, c.ID))
+	if err != nil {
+		return courseExamDetail.CourseExamDetail, err
+	}
+
+	err = resp.Body.Error()
+	if err != nil {
+		return courseExamDetail.CourseExamDetail, err
+	}
+
+	err = resp.Body.ConvertData(&courseExamDetail)
+	if err != nil {
+		return courseExamDetail.CourseExamDetail, err
+	}
+
+	return courseExamDetail.CourseExamDetail, nil
 }
 
 func (c *CourseExam) All(ctx context.Context, r *util.PostData, param AllCourseExam) ([]*CourseExam, error) {
-	all := []*CourseExam{}
-	return all, nil
+	courseExamList := struct {
+		CourseExamList []*CourseExam `json:"course_exam_list"`
+	}{
+		CourseExamList: []*CourseExam{},
+	}
+
+	query := `query {
+		course_exam_list(
+			course_id:"%s",
+			search_by:"%s",
+			search_value:"%s",
+			order_by:"%s",
+			order_dir:"%s",
+			offset:%d,
+			limit:%d
+			limit_answer:%d
+		)
+		{
+			id,
+			course_id,
+			type_exam,
+			exam_index,
+			text,
+			image_url,
+			answers {
+				id,
+				course_exam_id,
+				type_answer,
+				label,
+				text,
+				image_url
+			}
+		}
+	}`
+
+	resp, err := r.Send(fmt.Sprintf(query,
+		param.CourseID, param.SearchBy, param.SearchValue, param.OrderBy, param.OrderDir, param.Offset, param.Limit, param.LimitAnswer))
+	if err != nil {
+		return courseExamList.CourseExamList, err
+	}
+
+	err = resp.Body.Error()
+	if err != nil {
+		return courseExamList.CourseExamList, err
+	}
+
+	err = resp.Body.ConvertData(&courseExamList)
+	if err != nil {
+		return courseExamList.CourseExamList, err
+	}
+
+	return courseExamList.CourseExamList, nil
 }
 
 func (c *CourseExam) Update(ctx context.Context, r *util.PostData) (uuid.UUID, error) {

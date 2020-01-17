@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/renosyah/AyoLesPortal/util"
 	uuid "github.com/satori/go.uuid"
@@ -39,10 +40,46 @@ func (c *ClassRoomQualification) Response() ClassRoomQualificationResponse {
 }
 
 func (c *ClassRoomQualification) One(ctx context.Context, r *util.PostData) (*ClassRoomQualification, error) {
-	one := &ClassRoomQualification{
-		ClassRoomID: c.ClassRoomID,
+	classQualificationDetail := struct {
+		ClassQualificationDetail *ClassRoomQualification `json:"class_qualification_detail"`
+	}{
+		ClassQualificationDetail: &ClassRoomQualification{},
 	}
-	return one, nil
+
+	query := `query {
+		class_qualification_detail(
+			classroom_id: "%s"
+		)
+		{
+			classroom_id,
+			total_score,
+			status,
+			course_qualification {
+				id,
+				course_id,
+				course_level,
+				min_score,
+				course_material_total,
+				course_exam_total
+			}
+		}
+	}`
+
+	resp, err := r.Send(fmt.Sprintf(query, c.ClassRoomID))
+	if err != nil {
+		return classQualificationDetail.ClassQualificationDetail, err
+	}
+
+	err = resp.Body.Error()
+	if err != nil {
+		return classQualificationDetail.ClassQualificationDetail, err
+	}
+
+	err = resp.Body.ConvertData(&classQualificationDetail)
+	if err != nil {
+		return classQualificationDetail.ClassQualificationDetail, err
+	}
+	return classQualificationDetail.ClassQualificationDetail, nil
 }
 
 // ITS DOESNOT HAVE TABLE
