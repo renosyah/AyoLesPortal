@@ -44,9 +44,14 @@ var rootCmd = &cobra.Command{
 		r.Handle("/register", auth.EmptyMiddleware(http.HandlerFunc(router.Register)))
 		r.Handle("/submit/register", auth.EmptyMiddleware(http.HandlerFunc(router.SubmitRegister)))
 
+		r.Handle("/logout", auth.EmptyMiddleware(http.HandlerFunc(router.Logout)))
+
+		r.Handle("/dashboard", auth.SessionMiddleware(http.HandlerFunc(router.Dashboard)))
+
 		// static file serve server
 		r.PathPrefix("/data/").Handler(http.StripPrefix("/data/", http.FileServer(http.Dir(viper.GetString("dir.files")))))
 
+		r.HandleFunc("/error", router.ErrorPage)
 		r.NotFoundHandler = r.NewRoute().HandlerFunc(router.NotFound).GetHandler()
 
 		port := viper.GetInt("app.port")

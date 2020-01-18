@@ -9,10 +9,12 @@ import (
 func SessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		cok := &util.CookieData{}
+		cok := &util.CookieData{
+			Name: util.DefaultName,
+		}
 		cookieConfig.Get(r, cok)
 
-		if cok.Value == "" && r.URL.Path != "/" {
+		if cok.Value == "" {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
 		}

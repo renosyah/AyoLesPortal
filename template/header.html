@@ -1,21 +1,15 @@
 <nav class="blue darken-4" role="navigation">
-  <div class="nav-wrapper container"><a id="logo-container" href="/" class="brand-logo">Lets Teach</a>
-    {{if .Teacher}}
-    <ul class="right hide-on-med-and-down">
-      <li><a>{{.Teacher.Name}}</a></li>
-    </ul>
-    <ul id="nav-mobile" class="sidenav">
-      <li><a>{{.Teacher.Name}}</a></li>
-    </ul>
-    <a data-target="nav-mobile" class="sidenav-trigger">{{.Teacher.Name}}</a>
-    {{else}}
-    <ul class="right hide-on-med-and-down">
-      <li><a href="/login">Login</a></li>
-    </ul>
-    <ul id="nav-mobile" class="sidenav">
-      <li><a href="/login">Login</a></li>
-    </ul>
-    <a href="/login" data-target="nav-mobile" class="sidenav-trigger">Login</a>
-    {{end}}
-  </div>
+    <div class="nav-wrapper container"><a id="logo-container" href="/" class="brand-logo">Lets Teach</a> {{if .teacher}}
+        <ul class="right hide-on-med-and-down">
+            <li><a>{{.teacher.Name}}</a></li>
+        </ul>
+        {{else}}
+        <ul class="right hide-on-med-and-down">
+            <li><a href="/login">Login</a></li>
+        </ul>
+        <ul id="nav-mobile" class="sidenav">
+            <li><a href="/login">Login</a></li>
+        </ul>
+        <a href="/login" data-target="nav-mobile" class="sidenav-trigger">Login</a> {{end}}
+    </div>
 </nav>

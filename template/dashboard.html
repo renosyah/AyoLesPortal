@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+    <title>Dashboard</title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="data/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
+    <link href="data/css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
+    <style type="text/css">
+        #content {
+            padding: 5px;
+            min-height: 900px;
+        }
+    </style>
+</head>
+
+<body>
+
+    {{template "header.html" .}}
+
+    <div class="row">
+        <div class="col s12 m3 l3">
+            <div id="menu">
+                <ul class="collapsible expandable">
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons">arrow_drop_down</i>
+                            <h6> Course Menu</h6>
+                        </div>
+                        <div class="collapsible-body"><span>
+                          <a href="?menu=newcourse">New Course</a>
+                        </span></div>
+                        <div class="collapsible-body"><span>
+                            <a href="?menu=listcourse">List Course</a>
+                          </span></div>
+                        <div class="collapsible-body"><span>
+                              <a href="?menu=unpublishcourse">Unpublish Course</a>
+                          </span></div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons">arrow_drop_down</i>
+                            <h6> Course Material Menu</h6>
+                        </div>
+                        <div class="collapsible-body"><span>
+                          <a href="?menu=newcoursematerial">Add Course Material</a>
+                        </span></div>
+                        <div class="collapsible-body"><span>
+                            <a href="?menu=listcoursematerial">List Course Material</a>
+                          </span></div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons">arrow_drop_down</i>
+                            <h6> Course Exam Menu</h6>
+                        </div>
+                        <div class="collapsible-body"><span>
+                          <a href="?menu=newcoursematerial">Add Course Exam</a>
+                        </span></div>
+                        <div class="collapsible-body"><span>
+                            <a href="?menu=listcoursematerial">List Course Exam</a>
+                          </span></div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons">arrow_drop_down</i>
+                            <h6> Category Menu</h6>
+                        </div>
+                        <div class="collapsible-body"><span>
+                          <a href="?menu=newcategory">New Category</a>
+                        </span></div>
+                        <div class="collapsible-body"><span>
+                            <a href="?menu=listcategory">List Category</a>
+                          </span></div>
+                    </li>
+                    <li>
+                        <div class="collapsible-header"><i class="material-icons">arrow_drop_down</i>
+                            <h6> Profile Menu</h6>
+                        </div>
+                        <div class="collapsible-body"><span>
+                          <a href="?menu=editprofile">Edit Profile</a>
+                        </span></div>
+                        <div class="collapsible-body"><span>
+                            <a href="/logout">Logout</a>
+                          </span></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col s12 m9 l9">
+            <div id="container">
+                <div id="content">
+
+
+                    <h3 class="header center orange-text">Start Teaching Now</h3>
+                    <div class="row center">
+                        <h6 class="header col s12 light">A modern and simple course platform for you to share your knowledge with all student across nations</h6>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {{template "footer.html"}}
+
+    <!--  Scripts-->
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="data/js/materialize.js"></script>
+    <script src="data/js/init.js"></script>
+    <script>
+        var elem = document.querySelector('.collapsible.expandable');
+        var instance = M.Collapsible.init(elem, {
+            accordion: false
+        });
+    </script>
+
+</body>
+
+</html>

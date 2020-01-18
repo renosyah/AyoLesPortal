@@ -8,6 +8,7 @@ import (
 func Index(w http.ResponseWriter, r *http.Request) {
 	err := temp.ExecuteTemplate(w, "index.html", nil)
 	if err != nil {
-		fmt.Fprintln(w, http.StatusInternalServerError)
+		http.Redirect(w, r, fmt.Sprintf("/error?message=%s", err.Error()), http.StatusSeeOther)
+		return
 	}
 }

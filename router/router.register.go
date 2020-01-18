@@ -15,7 +15,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		"message": message,
 	})
 	if err != nil {
-		fmt.Fprintln(w, http.StatusInternalServerError)
+		http.Redirect(w, r, fmt.Sprintf("/error?message=%s", err.Error()), http.StatusSeeOther)
+		return
 	}
 }
 
@@ -48,7 +49,7 @@ func SubmitRegister(w http.ResponseWriter, r *http.Request) {
 		Value: log.ID.String(),
 	})
 	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		http.Redirect(w, r, fmt.Sprintf("/error?message=%s", err.Error()), http.StatusSeeOther)
 		return
 	}
 

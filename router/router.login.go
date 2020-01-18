@@ -15,8 +15,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		"message": message,
 	})
 	if err != nil {
-		fmt.Println(err)
-		fmt.Fprintln(w, http.StatusInternalServerError)
+		http.Redirect(w, r, fmt.Sprintf("/error?message=%s", err.Error()), http.StatusSeeOther)
+		return
 	}
 }
 
@@ -48,7 +48,7 @@ func SubmitLogin(w http.ResponseWriter, r *http.Request) {
 		Value: log.ID.String(),
 	})
 	if err != nil {
-		http.Error(w, "internal server error", http.StatusInternalServerError)
+		http.Redirect(w, r, fmt.Sprintf("/error?message=%s", err.Error()), http.StatusSeeOther)
 		return
 	}
 
