@@ -15,6 +15,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"github.com/renosyah/AyoLesPortal/auth"
 	"github.com/renosyah/AyoLesPortal/router"
 	"github.com/renosyah/AyoLesPortal/util"
 )
@@ -28,6 +29,7 @@ var rootCmd = &cobra.Command{
 	Use: "app",
 	PreRun: func(cmd *cobra.Command, args []string) {
 
+		auth.Init()
 		router.Init(req, viper.GetString("template.path"))
 
 	},
@@ -35,14 +37,16 @@ var rootCmd = &cobra.Command{
 
 		r := mux.NewRouter()
 
-		r.HandleFunc("/", router.Index)
+		r.Handle("/", auth.EmptyMiddleware(http.HandlerFunc(router.Index)))
+		r.Handle("/login", auth.EmptyMiddleware(http.HandlerFunc(router.Login)))
+		r.Handle("/submit/login", auth.EmptyMiddleware(http.HandlerFunc(router.SubmitLogin)))
+
+		r.Handle("/register", auth.EmptyMiddleware(http.HandlerFunc(router.Register)))
+		r.Handle("/submit/register", auth.EmptyMiddleware(http.HandlerFunc(router.SubmitRegister)))
 
 		// static file serve server
-		r.PathPrefix("/data/").Handler(http.StripPrefix("/data/", http.FileServer(http.Dir(viper.GetString("utils.files")))))
-		r.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir(viper.GetString("utils.css")))))
-		r.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(http.Dir(viper.GetString("utils.js")))))
-		r.PathPrefix("/fonts/").Handler(http.StripPrefix("/fonts/", http.FileServer(http.Dir(viper.GetString("utils.fonts")))))
-		
+		r.PathPrefix("/data/").Handler(http.StripPrefix("/data/", http.FileServer(http.Dir(viper.GetString("dir.files")))))
+
 		r.NotFoundHandler = r.NewRoute().HandlerFunc(router.NotFound).GetHandler()
 
 		port := viper.GetInt("app.port")

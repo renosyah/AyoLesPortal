@@ -6,6 +6,8 @@ import (
 	"github.com/gorilla/securecookie"
 )
 
+const DefaultName = "session"
+
 var cookies = map[string]*securecookie.SecureCookie{
 	"previous": securecookie.New(
 		securecookie.GenerateRandomKey(64),

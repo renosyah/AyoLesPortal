@@ -2,7 +2,7 @@
 name = "ayoles-portal"
 version = "0.0.1"
 host = "localhost"
-port = 80
+port = 8000
 read_timeout = 5
 write_timeout = 10
 idle_timeout = 15
@@ -16,8 +16,5 @@ path = "template/*.html"
 [api]
 credential = "credential/ayoles-19ba0cc86014.json"
 
-[utils]
+[dir]
 files = "files"
-css = "files/css"
-fonts = "files/fonts"
-js = "files/js"
