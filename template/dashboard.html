@@ -23,7 +23,7 @@
     {{template "header.html" .}}
 
     <div class="row">
-        <div class="col s12 m3 l3">
+        <div class="col s12 m4 l3">
             <div id="menu">
                 <ul class="collapsible expandable">
                     <li>
@@ -34,10 +34,7 @@
                           <a href="?menu=newcourse">New Course</a>
                         </span></div>
                         <div class="collapsible-body"><span>
-                            <a href="?menu=listcourse">List Course</a>
-                          </span></div>
-                        <div class="collapsible-body"><span>
-                              <a href="?menu=unpublishcourse">Unpublish Course</a>
+                            <a href="?menu=listcourse&offset=0&limit=10">List Course</a>
                           </span></div>
                     </li>
                     <li>
@@ -48,7 +45,7 @@
                           <a href="?menu=newcoursematerial">Add Course Material</a>
                         </span></div>
                         <div class="collapsible-body"><span>
-                            <a href="?menu=listcoursematerial">List Course Material</a>
+                            <a href="?menu=listcoursematerial&offset=0&limit=10">List Course Material</a>
                           </span></div>
                     </li>
                     <li>
@@ -56,10 +53,10 @@
                             <h6> Course Exam Menu</h6>
                         </div>
                         <div class="collapsible-body"><span>
-                          <a href="?menu=newcoursematerial">Add Course Exam</a>
+                          <a href="?menu=newexam">Add Course Exam</a>
                         </span></div>
                         <div class="collapsible-body"><span>
-                            <a href="?menu=listcoursematerial">List Course Exam</a>
+                            <a href="?menu=listexam&offset=0&limit=10">List Course Exam</a>
                           </span></div>
                     </li>
                     <li>
@@ -70,7 +67,7 @@
                           <a href="?menu=newcategory">New Category</a>
                         </span></div>
                         <div class="collapsible-body"><span>
-                            <a href="?menu=listcategory">List Category</a>
+                            <a href="?menu=listcategory&offset=0&limit=10">List Category</a>
                           </span></div>
                     </li>
                     <li>
@@ -87,16 +84,128 @@
                 </ul>
             </div>
         </div>
-        <div class="col s12 m9 l9">
+        <div class="col s12 m8 l9">
             <div id="container">
                 <div id="content">
 
+                    {{if .newCourse}}
 
-                    <h3 class="header center orange-text">Start Teaching Now</h3>
+                    <h3 class="header center orange-text">Create New Course</h3>
+
+                    {{else if .listCourse}}
+                    <div class="row">
+                        {{range .listCourse}}
+
+                        <div class="col s12 m8 l4">
+                            <div class="card">
+                                <div class="card-image waves-effect waves-block waves-light">
+                                    <img class="activator" width="180" height="150" src="https://warm-wave-76942.herokuapp.com/{{.ImageURL}}">
+                                </div>
+                                <div class="card-content">
+                                    <span class="card-title activator grey-text text-darken-4">{{.CourseName}}<i class="material-icons right">more_vert</i></span>
+                                    <div class="row">
+                                        <div class="input-field col s12 m12 l12">
+                                            <button onclick="window.location.href='/courseDetail?id={{.ID}}';" class="btn-small waves-effect waves-light green">Detail</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-reveal">
+                                    <span class="card-title grey-text text-darken-4">{{.CourseName}}<i class="material-icons right">close</i></span>
+                                    <p>{{range .CourseDetails}} {{.OverviewText}}<br> {{end}}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{end}}
+                    </div>
+
+                    {{else if .newCourseMaterial}}
+
+                    <h3 class="header center orange-text">Create New Course Material</h3>
+
+                    {{else if .listCourseMaterial}}
+                    <div class="row">
+                        {{range .listCourseMaterial}}
+
+                        <div class="col s12 m8 l4">
+                            <div class="card">
+                                <div class="card-image">
+                                    <img width="180" height="150" src="https://warm-wave-76942.herokuapp.com/{{.ImageURL}}">
+                                    <span class="card-title">{{.CourseName}}</span>
+                                </div>
+                                <div class="card-content">
+                                    <p> </p>
+                                </div>
+                                <div class="card-action">
+                                    <span class="green-text"><a href="/courseMaterial?id={{.ID}}">Edit Course Materials</a></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{end}}
+                    </div>
+
+                    {{else if .newCourseExam}}
+
+                    <h3 class="header center orange-text">Create New Course Exam</h3>
+
+                    {{else if .listCourseExam}}
+                    <div class="row">
+                        {{range .listCourseExam}}
+
+                        <div class="col s12 m8 l4">
+                            <div class="card">
+                                <div class="card-image">
+                                    <img width="180" height="150" src="https://warm-wave-76942.herokuapp.com/{{.ImageURL}}">
+                                    <span class="card-title">{{.CourseName}}</span>
+                                </div>
+                                <div class="card-content">
+                                    <p> </p>
+                                </div>
+                                <div class="card-action">
+                                    <span class="green-text"><a href="/courseExam?id={{.ID}}">Edit Course Exam</a></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{end}}
+                    </div>
+
+                    {{else if .newCategory}}
+
+                    <h3 class="header center orange-text">Create New Category</h3>
+
+                    {{else if .listCategory}}
+                    <div class="row">
+                        {{range .listCategory}}
+
+                        <div class="col s12 m8 l4">
+                            <div class="card horizontal">
+                                <div class="card-stacked">
+                                    <div class="card-content">
+                                        <h4>{{.Name}}</h4>
+                                    </div>
+                                    <div class="card-action">
+                                        <a href="/categoryEdit?id={{.ID}}">Edit</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{end}}
+                    </div>
+                    {{else if .teacherProfile}}
+
+                    <h3 class="header center orange-text">Edit {{.teacherProfile.Name}}</h3>
+
+                    {{else}}
+
+                    <h3 class="header center orange-text">Welcome {{.teacher.Name}}</h3>
                     <div class="row center">
                         <h6 class="header col s12 light">A modern and simple course platform for you to share your knowledge with all student across nations</h6>
                     </div>
 
+                    {{end}}
 
                 </div>
             </div>
