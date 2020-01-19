@@ -15,6 +15,8 @@ import (
 func Dashboard(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
+	offset, _ := strconv.Atoi(r.FormValue("offset"))
+	limit, _ := strconv.Atoi(r.FormValue("limit"))
 
 	id, _ := uuid.FromString(getCookie(r).Value)
 	dteacher, errAp := teacherModule.One(ctx, api.OneTeacherParam{ID: id})
@@ -23,13 +25,17 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	listCourse, err := getCourses(ctx, w, r, dteacher)
+	listCourse, err := getCourses(ctx, w, r, dteacher, offset, limit)
 	if err != nil {
 		http.Redirect(w, r, fmt.Sprintf("/error?message=%s", err.Error()), http.StatusSeeOther)
 		return
 	}
 
-	data := map[string]interface{}{"teacher": dteacher}
+	data := map[string]interface{}{
+		"teacher": dteacher,
+		"offset":  offset + 5,
+		"limit":   limit,
+	}
 
 	switch r.FormValue("menu") {
 	case "newcourse":
@@ -38,6 +44,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 
 	case "listcourse":
 		data["listCourse"] = listCourse
+		data["listIsEmpty"] = len(listCourse) == 0
 		break
 
 	case "newcoursematerial":
@@ -46,6 +53,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 
 	case "listcoursematerial":
 		data["listCourseMaterial"] = listCourse
+		data["listIsEmpty"] = len(listCourse) == 0
 		break
 
 	case "newexam":
@@ -54,6 +62,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 
 	case "listexam":
 		data["listCourseExam"] = listCourse
+		data["listIsEmpty"] = len(listCourse) == 0
 		break
 
 	case "newcategory":
@@ -61,13 +70,14 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 		break
 
 	case "listcategory":
-		listCategory, err := getCategories(ctx, w, r)
+		listCategory, err := getCategories(ctx, w, r, offset, limit)
 		if err != nil {
 			http.Redirect(w, r, fmt.Sprintf("/error?message=%s", err.Error()), http.StatusSeeOther)
 			return
 		}
 
 		data["listCategory"] = listCategory
+		data["listIsEmpty"] = len(listCategory) == 0
 		break
 
 	case "editprofile":
@@ -87,10 +97,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 
 //-------------------//
 
-func getCourses(ctx context.Context, w http.ResponseWriter, r *http.Request, t model.TeacherResponse) ([]model.CourseResponse, *api.Error) {
-
-	offset, _ := strconv.Atoi(r.FormValue("offset"))
-	limit, _ := strconv.Atoi(r.FormValue("limit"))
+func getCourses(ctx context.Context, w http.ResponseWriter, r *http.Request, t model.TeacherResponse, offset, limit int) ([]model.CourseResponse, *api.Error) {
 
 	listCourse, err := courseModule.All(ctx, api.AllCourseParam{
 		TeacherID:   t.ID,
@@ -108,10 +115,7 @@ func getCourses(ctx context.Context, w http.ResponseWriter, r *http.Request, t m
 	return listCourse, nil
 }
 
-func getCategories(ctx context.Context, w http.ResponseWriter, r *http.Request) ([]model.CategoryResponse, *api.Error) {
-
-	offset, _ := strconv.Atoi(r.FormValue("offset"))
-	limit, _ := strconv.Atoi(r.FormValue("limit"))
+func getCategories(ctx context.Context, w http.ResponseWriter, r *http.Request, offset, limit int) ([]model.CategoryResponse, *api.Error) {
 
 	listCategory, err := categoryModule.All(ctx, api.AllCategoryParam{
 		SearchBy:    "name",
