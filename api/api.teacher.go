@@ -17,6 +17,13 @@ type (
 		Name string
 	}
 
+	TeacherParam struct {
+		ID       uuid.UUID `json:"id"`
+		Name     string    `json:"name"`
+		Email    string    `json:"email"`
+		Password string    `json:"password"`
+	}
+
 	TeacherLoginParam struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
@@ -123,6 +130,32 @@ func (m TeacherModule) One(ctx context.Context, param OneTeacherParam) (model.Te
 	resp = teacher.Response()
 
 	return resp, nil
+}
+
+func (m TeacherModule) Update(ctx context.Context, param TeacherParam) *Error {
+
+	teacher := &model.Teacher{
+		ID:       param.ID,
+		Name:     param.Name,
+		Email:    param.Email,
+		Password: param.Password,
+	}
+
+	err := teacher.Update(ctx, m.r)
+	if err != nil {
+		status := http.StatusInternalServerError
+		message := "error on update one teacher"
+
+		if errors.Cause(err) == sql.ErrNoRows {
+			status = http.StatusOK
+			message = "no teacher found"
+		}
+
+		return NewErrorWrap(err, m.Name, "update/teacher",
+			message, status)
+	}
+
+	return nil
 }
 
 func (m TeacherModule) Login(ctx context.Context, param TeacherLoginParam) (model.TeacherResponse, *Error) {

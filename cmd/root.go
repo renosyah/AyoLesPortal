@@ -44,6 +44,7 @@ var rootCmd = &cobra.Command{
 		r.Handle("/register", auth.EmptyMiddleware(http.HandlerFunc(router.Register)))
 		r.Handle("/submit/register", auth.EmptyMiddleware(http.HandlerFunc(router.SubmitRegister)))
 
+		r.Handle("/update/profile", auth.SessionMiddleware(http.HandlerFunc(router.UpdateProfile)))
 		r.Handle("/logout", auth.EmptyMiddleware(http.HandlerFunc(router.Logout)))
 
 		r.Handle("/dashboard", auth.SessionMiddleware(http.HandlerFunc(router.Dashboard)))

@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/renosyah/AyoLesPortal/util"
@@ -193,8 +194,49 @@ func (t *Teacher) Login(ctx context.Context, r *util.PostData) (*Teacher, error)
 	return teacherLogin.TeacherLogin, nil
 }
 
-func (t *Teacher) Update(ctx context.Context, r *util.PostData) (uuid.UUID, error) {
-	return t.ID, nil
+func (t *Teacher) Update(ctx context.Context, r *util.PostData) error {
+
+	teacherUpdate := struct {
+		TeacherUpdate Teacher `json:"teacher_update"`
+	}{
+		TeacherUpdate: Teacher{},
+	}
+
+	query := `mutation {
+		teacher_update(
+			id : "%s",
+			name:"%s",
+			email:"%s",
+			password:"%s"
+		)
+		{
+			id,
+			name,
+			email
+		}
+	}`
+
+	resp, err := r.Send(fmt.Sprintf(query, t.ID, t.Name, t.Email, t.Password))
+	if err != nil {
+		return err
+	}
+
+	err = resp.Body.Error()
+	if err != nil {
+		return err
+	}
+
+	err = resp.Body.ConvertData(&teacherUpdate)
+	if err != nil {
+		return err
+	}
+
+	var emptyUUID uuid.UUID
+	if teacherUpdate.TeacherUpdate.ID == emptyUUID {
+		return errors.New("update failed,id is empty")
+	}
+
+	return nil
 }
 
 func (t *Teacher) Delete(ctx context.Context, r *util.PostData) (uuid.UUID, error) {

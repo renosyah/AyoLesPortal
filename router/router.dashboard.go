@@ -33,7 +33,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]interface{}{
 		"teacher": dteacher,
-		"offset":  offset + 5,
+		"offset":  offset + limit,
 		"limit":   limit,
 	}
 
