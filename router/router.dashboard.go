@@ -18,6 +18,9 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 	offset, _ := strconv.Atoi(r.FormValue("offset"))
 	limit, _ := strconv.Atoi(r.FormValue("limit"))
 
+	by := r.FormValue("by")
+	dir := r.FormValue("dir")
+
 	id, _ := uuid.FromString(getCookie(r).Value)
 	dteacher, errAp := teacherModule.One(ctx, api.OneTeacherParam{ID: id})
 	if errAp != nil {
@@ -25,7 +28,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	listCourse, err := getCourses(ctx, w, r, dteacher, offset, limit)
+	listCourse, err := getCourses(ctx, w, r, dteacher, offset, limit, by, dir)
 	if err != nil {
 		http.Redirect(w, r, fmt.Sprintf("/error?message=%s", err.Error()), http.StatusSeeOther)
 		return
@@ -35,6 +38,8 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 		"teacher": dteacher,
 		"offset":  offset + limit,
 		"limit":   limit,
+		"by":      by,
+		"dir":     dir,
 	}
 
 	switch r.FormValue("menu") {
@@ -70,7 +75,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 		break
 
 	case "listcategory":
-		listCategory, err := getCategories(ctx, w, r, offset, limit)
+		listCategory, err := getCategories(ctx, w, r, offset, limit, by, dir)
 		if err != nil {
 			http.Redirect(w, r, fmt.Sprintf("/error?message=%s", err.Error()), http.StatusSeeOther)
 			return
@@ -97,14 +102,19 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 
 //-------------------//
 
-func getCourses(ctx context.Context, w http.ResponseWriter, r *http.Request, t model.TeacherResponse, offset, limit int) ([]model.CourseResponse, *api.Error) {
+func getCourses(ctx context.Context, w http.ResponseWriter, r *http.Request, t model.TeacherResponse, offset, limit int, by string, dir string) ([]model.CourseResponse, *api.Error) {
+
+	if by == "" || dir == "" {
+		by = "course_name"
+		dir = "asc"
+	}
 
 	listCourse, err := courseModule.All(ctx, api.AllCourseParam{
 		TeacherID:   t.ID,
 		SearchBy:    "course_name",
 		SearchValue: "",
-		OrderBy:     "course_name",
-		OrderDir:    "asc",
+		OrderBy:     by,
+		OrderDir:    dir,
 		Offset:      offset,
 		Limit:       limit,
 	})
@@ -115,13 +125,18 @@ func getCourses(ctx context.Context, w http.ResponseWriter, r *http.Request, t m
 	return listCourse, nil
 }
 
-func getCategories(ctx context.Context, w http.ResponseWriter, r *http.Request, offset, limit int) ([]model.CategoryResponse, *api.Error) {
+func getCategories(ctx context.Context, w http.ResponseWriter, r *http.Request, offset, limit int, by string, dir string) ([]model.CategoryResponse, *api.Error) {
+
+	if by == "" || dir == "" {
+		by = "name"
+		dir = "asc"
+	}
 
 	listCategory, err := categoryModule.All(ctx, api.AllCategoryParam{
 		SearchBy:    "name",
 		SearchValue: "",
-		OrderBy:     "name",
-		OrderDir:    "asc",
+		OrderBy:     by,
+		OrderDir:    dir,
 		Offset:      offset,
 		Limit:       limit,
 	})
